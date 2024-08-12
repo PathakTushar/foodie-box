@@ -38,7 +38,7 @@ const FilterResult = () => {
             if (latitude && longitude && radius) {
                 try {
                     dispatch(setLoading(true));
-                    const { data } = await axios.get(`${server}/restaurant/getWithInRadius?latitude=${latitude}&longitude=${longitude}&radius=${radius}`)
+                    const { data } = await axios.get(`${server}/restaurant/getWithInRadius?latitude=${latitude}&longitude=${longitude}&radius=${radius}&page=${currentPage}&limit=${limit}`)
                     setRestaurants(data.restaurants)
                 }
                 catch (err) {
