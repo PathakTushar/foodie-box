@@ -25,15 +25,11 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "http://localhost:4173",
-        process.env.CLIENT_URL,
-      ],
-      methods: ["GET", "POST", "PUT", "DELETE"],
-    //   credentials: true,
-}))
+app.use(cors({ origin: true }));
+app.use((req, res, next) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    next();
+});
 
 app.get('/cuisines', async (req, res) => {
     try {
