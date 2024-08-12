@@ -32,7 +32,7 @@ app.use(cors({
         process.env.CLIENT_URL,
       ],
       methods: ["GET", "POST", "PUT", "DELETE"],
-      credentials: true,
+    //   credentials: true,
 }))
 
 app.get('/cuisines', async (req, res) => {
