@@ -121,7 +121,8 @@ export const getRestaurantWithFilters = async (req, res) => {
 
         // Construct the query object dynamically based on the provided filters
         let query = {};
-
+        // console.log("hello");
+        
         if (countryId) {
             // Validate the provided countryId
             if (!mongoose.Types.ObjectId.isValid(countryId)) {
@@ -164,6 +165,10 @@ export const getRestaurantWithFilters = async (req, res) => {
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
 
+        const allRest = await Restaurant.find(query)
+        const count = allRest.length
+        // console.log(count);
+
         // Find restaurants based on the constructed query
         const restaurants = await Restaurant.find(query)
             .populate({
@@ -178,8 +183,7 @@ export const getRestaurantWithFilters = async (req, res) => {
             .limit(limit)
             .skip(startIndex);
 
-        const count = restaurants.length;
-
+        
         const paginationResult = {};
 
         if (endIndex < count) {
