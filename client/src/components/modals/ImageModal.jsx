@@ -24,28 +24,32 @@ const ImageModal = ({ onClose }) => {
             toast.error("Please upload an image before submitting.");
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('image', image);
-
+    
         try {
-            dispatch(setLoading(true))
+            dispatch(setLoading(true));
             const { data } = await axios.post(`${server}/restaurant/upload`, formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data" // Corrected typo
+                    "Content-Type": "multipart/form-data"
                 }
             });
-            // console.log(data);
-            // Update global state with new restaurants
-            dispatch(setRestaurants(data.restaurants))
-            dispatch(setCuisine(data.cuisine))
-            navigate("/image-result")
-            toast.success("Image uploaded successfully!");
+    
+            if (data.restaurants.length === 0 || !data.cuisine) {
+                toast.error("Cuisine not found");
+                navigate("/"); // Or wherever you want to redirect if no results
+            } else {
+                dispatch(setRestaurants(data.restaurants));
+                dispatch(setCuisine(data.cuisine));
+                navigate("/image-result");
+                toast.success("Image uploaded successfully!");
+            }
         } catch (err) {
             toast.error(err?.response?.data?.message || "Something went wrong");
-        }
-        finally {
-            setLoading(false)
+        } finally {
+            dispatch(setLoading(false));
+            onClose();
         }
     };
 

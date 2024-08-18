@@ -310,7 +310,7 @@ async function analyzeFoodImage(file, prompt) {
 
 export const getCuisine = async (req, res) => {
     try {
-        const cuisineName = req.name ? req.name.replace(/\s+/g, "") : "";
+        const cuisineName = req.name ? req.name.trim().replace(/\s+/g, " ") : "";
 
         const cuisines = await Cuisine.find({
             cuisineName: cuisineName,
@@ -354,59 +354,158 @@ export const uploadImage = async (req, res, next) => {
         return res.status(400).send({ message: "No file uploaded" });
     }
 
-    console.log("hello");
-
     // writing the promt for the image :
 
     const prompt = `
-    Given an image of a food item, predict the cuisine it belongs to from the following list. Just provide the name of the cuisine.Just provide a cuisine name from the following list.Dont include any extra characters in your response:
-  
-    - Continental
-    - American
-    - Asian
-    - North Indian
-    - Thai
-    - European
-    - Mexican
-    - Chinese
-    - Cafe
-    - Italian
-    - Finger Food
-    - Modern Indian
-    - Mughlai
-    - Mediterranean
-    - Fast Food
-    - South Indian
-    - Middle Eastern
-    - Bengali
-    - Tex-Mex
-    - Biryani
-    - Desserts
-    - Seafood
-    - Street Food
-    - Tea
-    - Bakery
-    - Burger
-    - Pizza
-    - Healthy Food
-    - Salad
-    - Beverages
-    - Japanese
-    - British
-    - Spanish
-    - Greek
-    - Charcoal Grill
-    - Indonesian
-    - North Eastern
-    - Burmese
-    - German
-    - Andhra
-    - Chettinad
-    - Goan
-    - Hyderabadi
-    - Awadhi
-    - Arabian
-    `;
+Given an image of a food item, predict the cuisine it belongs to from the following list. Just provide the name of the cuisine. Just provide the same cuisine name as given in the following list. Don't include any extra characters in your response:
+
+- Continental
+- American
+- Asian
+- North Indian
+- Thai
+- European
+- Mexican
+- Chinese
+- Cafe
+- Italian
+- Finger Food
+- Modern Indian
+- Mughlai
+- Mediterranean
+- Fast Food
+- South Indian
+- Middle Eastern
+- Bengali
+- Tex-Mex
+- Biryani
+- Desserts
+- Seafood
+- Street Food
+- Tea
+- Bakery
+- Burger
+- Pizza
+- Healthy Food
+- Salad
+- Beverages
+- Japanese
+- British
+- Spanish
+- Greek
+- Charcoal Grill
+- Indonesian
+- North Eastern
+- Burmese
+- German
+- Andhra
+- Chettinad
+- Goan
+- Hyderabadi
+- Awadhi
+- Arabian
+- Lebanese
+- Lucknowi
+- Ice Cream
+- Kerala
+- Rajasthani
+- Armenian
+- Sandwich
+- Malaysian
+- French
+- Maharashtrian
+- Malwani
+- Portuguese
+- African
+- Juices
+- Tibetan
+- Mithai
+- Indian
+- BBQ
+- Cajun
+- Vietnamese
+- Steak
+- Parsi
+- Mangalorean
+- Gujarati
+- Korean
+- International
+- Fusion
+- Turkish
+- Singaporean
+- Malay
+- Western
+- Australian
+- Cantonese
+- Dim Sum
+- Pakistani
+- Afghani
+- Filipino
+- Sri Lankan
+- Döner
+- Bar Food
+- Restaurant Cafe
+- Börek
+- World Cuisine
+- Patisserie
+- Izgara
+- Fresh Fish
+- Kebab
+- Turkish Pizza
+- Coffee and Tea
+- Curry
+- Taiwanese
+- Contemporary
+- Sushi
+- Ramen
+- Grill
+- Tapas
+- Vegetarian
+- South African
+- Peruvian
+- Latin American
+- Brazilian
+- Mineira
+- Gourmet Fast Food
+- Argentine
+- Asian Fusion
+- Kiwi
+- Pub Food
+- Fish and Chips
+- Sunda
+- Peranakan
+- Deli
+- Belgian
+- Durban
+- Scottish
+- Modern Australian
+- Breakfast
+- Southwestern
+- Bihari
+- Naga
+- Assamese
+- Drinks Only
+- Raw Meats
+- Kashmiri
+- Moroccan
+- Nepalese
+- Iranian
+- Cuisine Varies
+- Oriya
+- Persian
+- Canadian
+- South American
+- Southern
+- Soul Food
+- Caribbean
+- Irish
+- New American
+- Hawaiian
+- Cuban
+- Diner
+- Bubble Tea
+- Teriyaki
+`;
 
     try {
         const analysisResult = await analyzeFoodImage(req.file, prompt);

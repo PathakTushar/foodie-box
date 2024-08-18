@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from '../redux/restaurantSlice';
 import toast from 'react-hot-toast';
 import Loader from '../components/specific/Loader';
+import EmptyState from '../components/shared/EmptyState';
 
 const FilterResult = () => {
     const dispatch = useDispatch()
@@ -54,7 +55,7 @@ const FilterResult = () => {
                     const { data } = await axios.get(`${server}/restaurant/with-filter?countryId=${countryId}&cuisineId=${cuisineId}&averageCostForTwo=${averageCostForTwo}&name=${name}&page=${currentPage}&limit=${limit}`)
                     if (data) {
                         setRestaurants(data.restaurants);
-                        setTotalPages(Math.ceil(data.totalRestaurants / 10)); // Update total pages based on the total count
+                        setTotalPages(Math.ceil(data.totalRestaurants / limit)); // Update total pages based on the total count
                     }
                 }
 
@@ -74,16 +75,17 @@ const FilterResult = () => {
         <AppLayout>
             {loading && <Loader />}
             {!loading && (
-                <div className='flex flex-col pt-24'>
-                    <div className='max-w-[2520px]
+                restaurants?.length > 0 ? (
+                    <div className='flex flex-col pt-24'>
+                        <div className='max-w-[2520px]
           mx-auto
           xl:px-20 
           md:px-10
           sm:px-2
           px-4 text-3xl font-bold'>Filtered Results</div>
-                    <Container>
-                        <div
-                            className="
+                        <Container>
+                            <div
+                                className="
                 pt-5
                 grid 
                 grid-cols-1 
@@ -94,21 +96,24 @@ const FilterResult = () => {
                 2xl:grid-cols-5
                 gap-8
               "
-                        >
-                            {restaurants?.map((listing) => (
-                                <ListingCard
-                                    key={listing?._id}
-                                    data={listing}
-                                />
-                            ))}
-                        </div>
-                    </Container>
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={(page) => setCurrentPage(page)} // Pass the page change handler
-                    />
-                </div>
+                            >
+                                {restaurants?.map((listing) => (
+                                    <ListingCard
+                                        key={listing?._id}
+                                        data={listing}
+                                    />
+                                ))}
+                            </div>
+                        </Container>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page) => setCurrentPage(page)} // Pass the page change handler
+                        />
+                    </div>
+                ) : (
+                    <EmptyState showReset={true} />
+                )
             )}
         </AppLayout>
     )

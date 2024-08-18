@@ -40,6 +40,15 @@ app.get('/cuisines', async (req, res) => {
     }
 });
 
+app.get('/cuisineNames', async (req, res) => {
+    try {
+        const cuisine = await Cuisine.find().select('cuisineName -_id'); // Fetch all cuisine from the database
+        res.status(200).json(cuisine); // Send the cuisine as a JSON response
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching cuisine', error });
+    }
+});
+
 app.use('/restaurant', RestaurantRoute)
 app.use('/country', CountryRoute)
 

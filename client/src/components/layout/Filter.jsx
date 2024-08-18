@@ -15,7 +15,7 @@ const Filter = () => {
                         font-semibold
                         py-3
                         px-4
-                        ml-2
+                        lg:ml-2
                         rounded-md
                         hover:bg-neutral-100
                         transition

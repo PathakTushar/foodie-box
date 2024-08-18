@@ -48,9 +48,9 @@ const ListingHero = ({
             text-neutral-500
           "
                         >
-                            <Link to={listing?.bookUrl}>Book Restaurant</Link>
-                            <Link to={listing?.photosUrl}>See Photos</Link>
-                            <Link to={listing?.menuUrl}>See Menu</Link>
+                            <Link to={listing?.bookUrl} target="_blank">Book Restaurant</Link>
+                            <Link to={listing?.photosUrl} target="_blank">See Photos</Link>
+                            <Link to={listing?.menuUrl} target="_blank">See Menu</Link>
                         </div>
                     </div>
                     <div

@@ -8,26 +8,33 @@ import ImageModal from '../modals/ImageModal';
 const Search = () => {
     const [openFilterModal, setOpenFilterModal] = useState(false);
     const [openImageModal, setOpenImageModal] = useState(false);
-    // const filterModal = useFilterModal()
-
 
     return (
         <>
-            <div className='min-w-96 flex flex-row items-center gap-5 pl-5 pr-5'>
+            <div className='min-w-96 flex flex-col lg:flex-row items-center gap-5 pl-5 pr-5'>
                 <Button
                     outline
                     label="Location"
                     icon={FaLocationDot}
-                    onClick={() => { setOpenFilterModal(true) }}
+                    onClick={() => setOpenFilterModal(true)}
                 />
                 <Button
                     label="Image"
                     icon={FaImage}
-                    onClick={() => { setOpenImageModal(true) }}
+                    onClick={() => setOpenImageModal(true)}
                 />
             </div>
-            {openFilterModal && <LocationModal isOpen={openFilterModal} setIsOpen={setOpenFilterModal} />}
-            {openImageModal && <ImageModal onClose={()=>{setOpenImageModal(false)}}/>}
+            {openFilterModal && (
+                <LocationModal 
+                    isOpen={openFilterModal} 
+                    setIsOpen={setOpenFilterModal} 
+                />
+            )}
+            {openImageModal && (
+                <ImageModal 
+                    onClose={() => setOpenImageModal(false)} 
+                />
+            )}
         </>
     );
 }

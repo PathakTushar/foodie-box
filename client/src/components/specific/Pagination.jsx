@@ -1,10 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    const windowSize = 5; // Number of pages to show at a time
+    // State to track the window size dynamically
+    const [windowSize, setWindowSize] = useState(5); // Default number of pages to show
 
-    // Calculate the start and end page numbers
+    // Handle window resizing to adjust the number of visible pages
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 640) { // Small screens (e.g., < 640px)
+                setWindowSize(3);
+            } else if (window.innerWidth < 1024) { // Medium screens (e.g., < 1024px)
+                setWindowSize(5);
+            } else { // Large screens (e.g., >= 1024px)
+                setWindowSize(7);
+            }
+        };
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Set initial window size
+        handleResize();
+
+        // Cleanup event listener on unmount
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Calculate the start and end page numbers based on window size
     const startPage = Math.max(1, Math.min(currentPage - Math.floor(windowSize / 2), totalPages - windowSize + 1));
     const endPage = Math.min(totalPages, startPage + windowSize - 1);
 
@@ -20,11 +42,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const pages = generatePages();
 
     return (
-        <div className="flex justify-center mt-8 mb-4">
-            <nav className="flex items-center space-x-2">
+        <div className="flex justify-center mt-8 mb-4 px-4">
+            <nav className="flex flex-wrap items-center space-x-2">
                 <button
                     onClick={() => onPageChange(currentPage - 1)}
-                    className={`px-4 py-2 border rounded ${currentPage === 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-700'}`}
+                    className={`px-3 py-1 md:px-4 md:py-2 border rounded ${currentPage === 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-700'}`}
                     disabled={currentPage === 1}
                 >
                     Previous
@@ -33,28 +55,28 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     <>
                         <button
                             onClick={() => onPageChange(1)}
-                            className="px-4 py-2 border rounded bg-white text-black hover:bg-gray-100"
+                            className="px-3 py-1 md:px-4 md:py-2 border rounded bg-white text-black hover:bg-gray-100"
                         >
                             1
                         </button>
-                        {startPage > 2 && <span className="px-4 py-2 border rounded bg-white text-black">...</span>}
+                        {startPage > 2 && <span className="px-3 py-1 md:px-4 md:py-2 border rounded bg-white text-black">...</span>}
                     </>
                 )}
                 {pages.map((page) => (
                     <button
                         key={page}
                         onClick={() => onPageChange(page)}
-                        className={`px-4 py-2 border rounded ${currentPage === page ? 'bg-black text-white font-semibold' : 'bg-white text-black hover:bg-gray-100'}`}
+                        className={`px-3 py-1 md:px-4 md:py-2 border rounded ${currentPage === page ? 'bg-black text-white font-semibold' : 'bg-white text-black hover:bg-gray-100'}`}
                     >
                         {page}
                     </button>
                 ))}
                 {endPage < totalPages && (
                     <>
-                        {endPage < totalPages - 1 && <span className="px-4 py-2 border rounded bg-white text-black">...</span>}
+                        {endPage < totalPages - 1 && <span className="px-3 py-1 md:px-4 md:py-2 border rounded bg-white text-black">...</span>}
                         <button
                             onClick={() => onPageChange(totalPages)}
-                            className="px-4 py-2 border rounded bg-white text-black hover:bg-gray-100"
+                            className="px-3 py-1 md:px-4 md:py-2 border rounded bg-white text-black hover:bg-gray-100"
                         >
                             {totalPages}
                         </button>
@@ -62,7 +84,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 )}
                 <button
                     onClick={() => onPageChange(currentPage + 1)}
-                    className={`px-4 py-2 border rounded ${currentPage === totalPages ? 'bg-gray-200 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-700'}`}
+                    className={`px-3 py-1 md:px-4 md:py-2 border rounded ${currentPage === totalPages ? 'bg-gray-200 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-700'}`}
                     disabled={currentPage === totalPages}
                 >
                     Next
@@ -73,4 +95,3 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 export default Pagination;
-

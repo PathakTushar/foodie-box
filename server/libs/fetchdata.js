@@ -29,32 +29,48 @@ export const addDataToDB = async (fileLocation) => {
                         has_table_booking,
                     } = rest.restaurant;
 
-                    const menuUrl = rest.restaurant.menu_url || ""
-                    const bookUrl = rest.restaurant.book_url || ""
-                    const photosUrl = rest.restaurant.photos_url || ""
+                    const menuUrl = rest.restaurant.menu_url || "";
+                    const bookUrl = rest.restaurant.book_url || "";
+                    const photosUrl = rest.restaurant.photos_url || "";
 
                     try {
-                        const existingRestaurant = await Restaurant.findOne({restaurantId: id})
-                        if(!existingRestaurant){
-                            const country = await Country.findOne({countryId: +location.country_id})
+                        const existingRestaurant = await Restaurant.findOne({ restaurantId: id });
+                        if (!existingRestaurant) {
+                            const country = await Country.findOne({ countryId: +location.country_id });
+
+                            if (!country) {
+                                console.error(`Country with ID ${location.country_id} not found.`);
+                                continue;
+                            }
+
                             const newLocation = new Location({
                                 ...location,
                                 latitude: Number(location.latitude),
                                 longitude: Number(location.longitude),
                                 country_id: country._id,
                             });
-    
+
+                            const savedLocation = await newLocation.save();
+                            if (!savedLocation) {
+                                console.error(`Failed to save location for restaurant ID ${id}.`);
+                                continue;
+                            }
+
                             const newRating = new Rating({
                                 ...user_rating,
                                 aggregate_rating: +user_rating.aggregate_rating,
                                 votes: +user_rating.votes,
                             });
-    
-                            const cuisinesArray = cuisines
-                                .split(",")
-                                .map((cuisine) => cuisine.trim());
+
+                            const savedRating = await newRating.save();
+                            if (!savedRating) {
+                                console.error(`Failed to save rating for restaurant ID ${id}.`);
+                                continue;
+                            }
+
+                            const cuisinesArray = cuisines.split(",").map((cuisine) => cuisine.trim());
                             let cuisineIds = [];
-    
+
                             for (const cuisine of cuisinesArray) {
                                 try {
                                     const result = await Cuisine.findOneAndUpdate(
@@ -64,45 +80,45 @@ export const addDataToDB = async (fileLocation) => {
                                     );
                                     cuisineIds.push(result._id);
                                 } catch (err) {
-                                    console.error(
-                                        `Error processing cuisine "${cuisine}":`,
-                                        err
-                                    );
+                                    console.error(`Error processing cuisine "${cuisine}":`, err);
                                 }
                             }
-    
-                            const savedLocation = await newLocation.save();
-                            const savedRating = await newRating.save();
-    
-                            const restaurant = new Restaurant({
-                                restaurantId: id,
-                                name,
-                                location: savedLocation._id,
-                                imageUrl: featured_image,
-                                cuisines: cuisineIds,
-                                switch_to_order_menu: switch_to_order_menu === 1,
-                                has_table_booking: has_table_booking === 1,
-                                has_online_delivery: has_online_delivery === 1,
-                                is_delivering_now: is_delivering_now === 1,
-                                price_range,
-                                average_cost_for_two,
-                                currency,
-                                rating: savedRating._id,
-                                menuUrl,
-                                bookUrl,
-                                photosUrl
-                            });
-    
-                            await restaurant.save();
+
+                            // Check if all necessary fields are created successfully
+                            if (savedLocation && savedRating) {
+                                const restaurant = new Restaurant({
+                                    restaurantId: id,
+                                    name,
+                                    location: savedLocation._id,
+                                    imageUrl: featured_image,
+                                    cuisines: cuisineIds,
+                                    switch_to_order_menu: switch_to_order_menu === 1,
+                                    has_table_booking: has_table_booking === 1,
+                                    has_online_delivery: has_online_delivery === 1,
+                                    is_delivering_now: is_delivering_now === 1,
+                                    price_range,
+                                    average_cost_for_two,
+                                    currency,
+                                    rating: savedRating._id,
+                                    menuUrl,
+                                    bookUrl,
+                                    photosUrl,
+                                });
+
+                                await restaurant.save();
+                            } else {
+                                console.error(`Failed to create restaurant with ID ${id} due to missing data.`);
+                            }
                         }
                     } catch (err) {
-                        console.error(err);
+                        console.error(`Error processing restaurant ID ${id}:`, err);
                     }
                 }
             }
         }
     }
 };
+
 
 export const addCountryToDB = async(fileLocation) => {
     const jsonData = JSON.parse(fs.readFileSync(fileLocation, "utf8"));

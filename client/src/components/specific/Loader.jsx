@@ -9,7 +9,7 @@ const Loader = () => {
             flex
             justify-center
             items-center
-            bg-white bg-opacity-75
+            bg-white
         "
         >
             <PuffLoader size={100} color="red" />

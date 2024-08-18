@@ -27,7 +27,7 @@ const Home = () => {
                 const { data } = await axios.get(`${server}/restaurant/get-all?page=${currentPage}&limit=${limit}`) // Fetch with the current page and items per page
                 if (data) {
                     setRestaurants(data.restaurants);
-                    setTotalPages(Math.ceil(data.totalRestaurants / 10)); // Update total pages based on the total count
+                    setTotalPages(Math.ceil(data.totalRestaurants / limit)); // Update total pages based on the total count
                 }
             } catch (err) {
                 toast.error(err?.response?.data?.message || "Something went wrong");
@@ -46,7 +46,7 @@ const Home = () => {
                 {loading && <Loader />}
                 {
                     !loading && (
-                        <>
+                        restaurants?.length > 0 ? <>
                             <div
                                 className="
                 pt-24
@@ -72,7 +72,9 @@ const Home = () => {
                                 totalPages={totalPages}
                                 onPageChange={(page) => setCurrentPage(page)} // Pass the page change handler
                             />
-                        </>
+                        </> : (
+                            <EmptyState showReset={true} />
+                        )
                     )
                 }
 

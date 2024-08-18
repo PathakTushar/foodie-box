@@ -10,7 +10,6 @@ const EmptyState = ({
 }) => {
 
     const navigate = useNavigate()
-    console.log("empty");
     
     return (
         <div
